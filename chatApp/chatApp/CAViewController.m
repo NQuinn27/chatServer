@@ -11,6 +11,7 @@
 @interface CAViewController () {
     NSString *userName;
     BOOL currentUser;
+    NSIndexPath *editingIndexPath;
 }
 
 @end
@@ -23,6 +24,16 @@
     [self setupToJoin];
     [self initNetworkCommunication];
     messages = [[NSMutableArray alloc] init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
 	// Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -41,7 +52,7 @@
 - (void)initNetworkCommunication {
     CFReadStreamRef readStream;
     CFWriteStreamRef writeStream;
-    CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)@"localhost", 80, &readStream, &writeStream);
+    CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)@"localhost", 90, &readStream, &writeStream);
     inputStream = (__bridge NSInputStream *)readStream;
     outputStream = (__bridge NSOutputStream *)writeStream;
     
@@ -91,13 +102,9 @@
     [messages addObject:result];
     [tView reloadData];
     
-    NSIndexPath *topIndexPath =
-    [NSIndexPath indexPathForRow:messages.count-1
-                       inSection:0];
-    [tView scrollToRowAtIndexPath:topIndexPath
-                      atScrollPosition:UITableViewScrollPositionMiddle
-                              animated:YES];
+    editingIndexPath = [NSIndexPath indexPathForRow:messages.count-1 inSection:0];
     
+    [tView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -115,6 +122,9 @@
         [cell.textLabel setTextAlignment:NSTextAlignmentRight];
         [cell setBackgroundColor:[UIColor greenColor]];
         s = [s substringFromIndex:5];
+    } else {
+        [cell setBackgroundColor:[UIColor blueColor]];
+        [cell.textLabel setTextColor:[UIColor whiteColor]];
     }
     
     cell.textLabel.text = s;
@@ -175,6 +185,26 @@
     
 }
 
+- (void)keyboardWillShow:(NSNotification *)notification
+{
+    CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    UIEdgeInsets contentInsets;
+    if (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])) {
+        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (keyboardSize.height), 0.0);
+    } else {
+        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (keyboardSize.width), 0.0);
+    }
+    
+    tView.contentInset = contentInsets;
+    tView.scrollIndicatorInsets = contentInsets;
+    [tView scrollToRowAtIndexPath:editingIndexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+}
 
+- (void)keyboardWillHide:(NSNotification *)notification
+{
+    tView.contentInset = UIEdgeInsetsZero;
+    tView.scrollIndicatorInsets = UIEdgeInsetsZero;
+}
 
 @end

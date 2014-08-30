@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>F8717F9E-550E-4BB7-8A78-1E7B4D0E8878</string>
+	<key>IDESourceControlProjectName</key>
+	<string>chatApp</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>D6A0043B1636584BB3CB3BB670A237A8092538D0</key>
+		<string>https://github.com/NQuinn27/chatServer.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>chatApp/chatApp.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>D6A0043B1636584BB3CB3BB670A237A8092538D0</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/NQuinn27/chatServer.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>D6A0043B1636584BB3CB3BB670A237A8092538D0</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>D6A0043B1636584BB3CB3BB670A237A8092538D0</string>
+			<key>IDESourceControlWCCName</key>
+			<string>chatServer</string>
+		</dict>
+	</array>
+</dict>
+</plist>
