@@ -16,16 +16,22 @@ class IphoneChat(Protocol):
         if len(a) > 1:
             command = a[0]
             content = a[1]
- 
+            ok = 0;
             msg = ""
             if command == "iam":
                 self.name = content
                 msg = self.name + " has joined"
+                ok = 1;
  
             elif command == "msg":
                 msg = self.name + ": " + content
                 print msg
+                ok = 1;
  
+            if (ok == 0):
+                print "Error in command"
+                return
+
             for c in self.factory.clients:
                 c.message(msg)
 

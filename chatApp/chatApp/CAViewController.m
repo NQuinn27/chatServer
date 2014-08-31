@@ -8,6 +8,12 @@
 
 #import "CAViewController.h"
 
+/*Set the IP Address of the ROUTER here to use on device
+ It will work between different devices on the same network
+ change to localhost to use the simulator on machine only
+ */
+#define CURRENT_ROUTER_IP @"192.168.1.105"
+
 @interface CAViewController () {
     NSString *userName;
     BOOL currentUser;
@@ -50,23 +56,34 @@
 }
 
 - (void)initNetworkCommunication {
+    //Set up the streams
     CFReadStreamRef readStream;
     CFWriteStreamRef writeStream;
-    CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)@"localhost", 90, &readStream, &writeStream);
+    
+    //Pair stream with socket to host
+    CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)CURRENT_ROUTER_IP, 90, &readStream, &writeStream);
+    
+    //Cast the streams to the instance variables
     inputStream = (__bridge NSInputStream *)readStream;
     outputStream = (__bridge NSOutputStream *)writeStream;
     
+    //Setup self as the delegate
     [inputStream setDelegate:self];
     [outputStream setDelegate:self];
     
+    //Put the streams into the run loop for listening
     [inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     [outputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     
+    //Open the streams
     [inputStream open];
     [outputStream open];
 }
 
 - (IBAction)joinChat:(id)sender {
+    
+    //Join the chat as a new user
+    //TODO - check if username is taken
     
     userName = inputNameField.text;
     
@@ -84,6 +101,8 @@
 }
 
 - (IBAction)sendMessage:(id)sender {
+    
+    //Send message over the output stream
     NSString *response  = [NSString stringWithFormat:@"msg:%@", chatTextField.text];
 	NSData *data = [[NSData alloc] initWithData:[response dataUsingEncoding:NSASCIIStringEncoding]];
 	[outputStream write:[data bytes] maxLength:[data length]];
@@ -91,6 +110,7 @@
 }
 
 - (void) messageReceived:(NSString *)message {
+    //Message recieved on the input stream
     
     NSArray *lines = [message componentsSeparatedByString: @":"];
     NSMutableString *result = [[NSMutableString alloc] init];
@@ -106,6 +126,8 @@
     
     [tView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
+
+#pragma mark - UITableViewDelegate
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
@@ -140,6 +162,8 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return messages.count;
 }
+
+#pragma mark - Stream Delegate
 
 - (void)stream:(NSStream *)theStream handleEvent:(NSStreamEvent)streamEvent {
     
@@ -184,6 +208,8 @@
     }
     
 }
+
+#pragma mark - KeyboardWillShow - KeyboardWillHide
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
